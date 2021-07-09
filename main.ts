@@ -146,31 +146,23 @@ function jumperupper () {
 }
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.collectibleBlueCrystal, function (sprite, location) {
     music.magicWand.play()
-    projectile = sprites.createProjectileFromSprite(img`
-        8 8 8 8 8 8 
-        8 8 8 8 8 8 
-        8 8 8 8 8 8 
-        8 8 8 8 8 8 
-        8 8 8 8 8 8 
-        8 8 8 8 8 8 
-        `, mySprite, 10, 50)
-    pause(2000)
+    pause(500)
     levelComplete()
 })
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.chestClosed, function (sprite, location) {
     if (level == 1) {
         game.splash("Use the up arrow twice", "to double jump!")
-        tiles.setTileAt(tiles.getTileLocation(4, 13), sprites.dungeon.chestOpen)
+        tiles.setTileAt(location, sprites.dungeon.chestOpen)
     }
     if (level == 2) {
         level2dumb = 0
-        game.splash("The map is bigger now!", "Move left and right more to explore it")
-        tiles.setTileAt(tiles.getTileLocation(1, 31), sprites.dungeon.chestOpen)
-        pause(10000)
-        level2dumb += 1
-        if (level2dumb == 1) {
+        if (level2dumb == 0) {
+            game.splash("The map is bigger now!", "Move left and right more to explore it")
+            tiles.setTileAt(location, sprites.dungeon.chestOpen)
+            level2dumb += 1
+        } else {
             game.splash("More pathways - not all are necessary", "But you may find treasure exploring!")
-            tiles.setTileAt(tiles.getTileLocation(19, 22), sprites.dungeon.chestOpen)
+            tiles.setTileAt(location, sprites.dungeon.chestOpen)
         }
     }
 })
@@ -290,7 +282,6 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
 function levelComplete () {
     level += 1
     pause(200)
-    fireworks()
     if (level == 2) {
         info.setScore(0)
         tiles.setTilemap(tilemap`level1`)
@@ -298,6 +289,9 @@ function levelComplete () {
         game.splash("LEVEL 2")
     } else if (level == 3) {
         info.setLife(3)
+        tiles.setTilemap(tilemap`level7`)
+        tiles.placeOnRandomTile(mySprite, sprites.dungeon.collectibleInsignia)
+        game.splash("LEVEL 3", "Avoid the grass to keep your lives!")
     } else if (level == 4) {
         tiles.setTilemap(tilemap`level2`)
     } else if (false) {
@@ -309,7 +303,11 @@ function levelComplete () {
 function fireworks () {
 	
 }
-let projectile: Sprite = null
+scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.collectibleRedCrystal, function (sprite, location) {
+    music.baDing.play()
+    info.changeScoreBy(1)
+    tiles.setTileAt(location, assets.tile`transparency16`)
+})
 let level2dumb = 0
 let jump = false
 let doubleJump = false
