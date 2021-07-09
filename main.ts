@@ -8,20 +8,19 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     jumperupper()
 })
 function attemptJump2 () {
-    let pixelsToMeters = 0
     let hero: Sprite = null
     // else if: either fell off a ledge, or double jumping
     if (hero.isHittingTile(CollisionDirection.Bottom)) {
-        hero.vy = -4 * pixelsToMeters
+        hero.vy = -4 * grass_intro
     } else if (doubleJump) {
-        doubleJumpSpeed = -3 * pixelsToMeters
+        level = -3 * grass_intro
         // Good double jump
         if (hero.vy >= -40) {
-            doubleJumpSpeed = -4.5 * pixelsToMeters
+            level = -4.5 * grass_intro
             hero.startEffect(effects.trail, 500)
             scene.cameraShake(2, 250)
         }
-        hero.vy = doubleJumpSpeed
+        hero.vy = level
         doubleJump = false
     }
 }
@@ -145,6 +144,14 @@ function jumperupper () {
         }
     }
 }
+scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.collectibleBlueCrystal, function (sprite, location) {
+    levelComplete()
+})
+scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.chestClosed, function (sprite, location) {
+    game.splash("Use the up arrow twice", "to double jump!")
+    grass_intro = 1
+    tiles.setTileAt(tiles.getTileLocation(4, 13), sprites.dungeon.chestOpen)
+})
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
     mySprite,
@@ -258,9 +265,23 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     mySprite.vy += 10
 })
-let doubleJumpSpeed = 0
+function levelComplete () {
+    level += 1
+    if (level == 2) {
+    	
+    } else if (level == 3) {
+    	
+    } else if (level == 4) {
+        tiles.setTilemap(tilemap`level2`)
+    } else {
+    	
+    }
+    game.over(true)
+}
+let grass_intro = 0
 let jump = false
 let doubleJump = false
+let level = 0
 let mySprite: Sprite = null
 scene.setBackgroundImage(img`
     9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
@@ -402,7 +423,11 @@ mySprite = sprites.create(img`
     . . c b d d d d d 5 5 5 b b . . 
     . . . c c c c c c c c b b . . . 
     `, SpriteKind.Player)
+tiles.setTilemap(tilemap`level5`)
+tiles.placeOnRandomTile(mySprite, sprites.dungeon.collectibleInsignia)
+scene.cameraFollowSprite(mySprite)
 mySprite.ay = 100
 controller.moveSprite(mySprite, 50, 0)
-tiles.setTilemap(tilemap`level2`)
-scene.cameraFollowSprite(mySprite)
+pause(500)
+game.splash("LEVEL 1", "Jump to the top with buttons!")
+level = 1
