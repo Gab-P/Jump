@@ -24,6 +24,10 @@ function attemptJump2 () {
         doubleJump = false
     }
 }
+scene.onOverlapTile(SpriteKind.Player, sprites.swamp.swampTile1, function (sprite, location) {
+    info.changeLifeBy(-1)
+    pause(500)
+})
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
     mySprite,
@@ -155,7 +159,6 @@ scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.chestClosed, function (sp
         tiles.setTileAt(location, sprites.dungeon.chestOpen)
     }
     if (level == 2) {
-        level2dumb = 0
         if (level2dumb == 0) {
             game.splash("The map is bigger now!", "Move left and right more to explore it")
             tiles.setTileAt(location, sprites.dungeon.chestOpen)
@@ -308,9 +311,9 @@ scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.collectibleRedCrystal, fu
     info.changeScoreBy(1)
     tiles.setTileAt(location, assets.tile`transparency16`)
 })
-let level2dumb = 0
 let jump = false
 let doubleJump = false
+let level2dumb = 0
 let level = 0
 let mySprite: Sprite = null
 scene.setBackgroundImage(img`
@@ -461,3 +464,5 @@ controller.moveSprite(mySprite, 50, 0)
 pause(500)
 game.splash("LEVEL 1", "Jump to the top with buttons!")
 level = 1
+level2dumb = 0
+mySprite.setStayInScreen(true)
