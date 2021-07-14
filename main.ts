@@ -137,6 +137,7 @@ function jumperupper () {
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.collectibleBlueCrystal, function (sprite, location) {
     music.magicWand.play()
     pause(500)
+    level += 1
     levelComplete()
 })
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.chestClosed, function (sprite, location) {
@@ -269,7 +270,6 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     mySprite.vy += 10
 })
 function levelComplete () {
-    level += 1
     pause(200)
     if (level == 2) {
         info.setScore(0)
@@ -283,6 +283,7 @@ function levelComplete () {
         game.splash("LEVEL 3", "Avoid the grass to keep your lives!")
     } else if (level == 4) {
         tiles.setTilemap(tilemap`level2`)
+        tiles.placeOnRandomTile(mySprite, sprites.dungeon.collectibleInsignia)
     } else if (false) {
     	
     } else {
@@ -449,7 +450,10 @@ scene.cameraFollowSprite(mySprite)
 mySprite.ay = 100
 controller.moveSprite(mySprite, 50, 0)
 pause(500)
-let levelBool = game.askForNumber("Start from beginning (1) or a specific level (0)?")
+let levelBool = 54
+while (levelBool > 1) {
+    levelBool = game.askForNumber("Start from beginning (1) or a specific level (0)?")
+}
 if (levelBool == 1) {
     level = 1
     game.splash("LEVEL 1", "Jump to the top with buttons!")
@@ -458,9 +462,11 @@ if (levelBool == 1) {
         levelStart = game.askForNumber("Enter your choice from level 1-4: ")
     }
     level = levelStart
-    if (true) {
+    if (level == 1) {
         level = 1
         game.splash("LEVEL 1", "Jump to the top with buttons!")
+    } else {
+        levelComplete()
     }
 }
 level2dumb = 0
