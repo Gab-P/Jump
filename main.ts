@@ -8,25 +8,11 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     jumperupper()
 })
 function attemptJump2 () {
-    let hero: Sprite = null
-    // else if: either fell off a ledge, or double jumping
-    if (hero.isHittingTile(CollisionDirection.Bottom)) {
-        hero.vy = -4 * level2dumb
-    } else if (doubleJump) {
-        level = -3 * level2dumb
-        // Good double jump
-        if (hero.vy >= -40) {
-            level = -4.5 * level2dumb
-            hero.startEffect(effects.trail, 500)
-            scene.cameraShake(2, 250)
-        }
-        hero.vy = level
-        doubleJump = false
-    }
+	
 }
 scene.onOverlapTile(SpriteKind.Player, sprites.swamp.swampTile1, function (sprite, location) {
     info.changeLifeBy(-1)
-    pause(500)
+    tiles.setTileAt(location, assets.tile`transparency16`)
 })
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
@@ -314,6 +300,7 @@ scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.collectibleRedCrystal, fu
 let jump = false
 let doubleJump = false
 let level2dumb = 0
+let levelStart = 0
 let level = 0
 let mySprite: Sprite = null
 scene.setBackgroundImage(img`
@@ -462,7 +449,19 @@ scene.cameraFollowSprite(mySprite)
 mySprite.ay = 100
 controller.moveSprite(mySprite, 50, 0)
 pause(500)
-game.splash("LEVEL 1", "Jump to the top with buttons!")
-level = 1
+let levelBool = game.askForNumber("Start from beginning (1) or a specific level (0)?")
+if (levelBool == 1) {
+    level = 1
+    game.splash("LEVEL 1", "Jump to the top with buttons!")
+} else {
+    while (levelStart > 4 || levelStart == 0) {
+        levelStart = game.askForNumber("Enter your choice from level 1-4: ")
+    }
+    level = levelStart
+    if (true) {
+        level = 1
+        game.splash("LEVEL 1", "Jump to the top with buttons!")
+    }
+}
 level2dumb = 0
 mySprite.setStayInScreen(true)
